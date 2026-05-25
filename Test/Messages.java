@@ -4,6 +4,7 @@ import java.io.FileWriter;
 
 public class Messages {
 
+    //
     private String messageID;
     private int numMessagesSent;
     private String recipient;
@@ -11,10 +12,13 @@ public class Messages {
     private String messageHash;
 
     private ArrayList<String> messageList = new ArrayList<>();
+
+    //we check the message ID
     public Boolean checkMessageID(String messageID) {
         return messageID.length() <= 10;
     }
 
+    //We check to see the Recipient's cellphone number contains 10 numbers and starts with an international code .
     public String checkRecipientCell(String recipient){
         if (recipient.length()<10 && recipient.startsWith("+")) {
             return "Cellphone successfully captured";
@@ -22,6 +26,7 @@ public class Messages {
             return "Cellphone number is incorrectly formatted or does not contain international code";
         }
     }
+    // we create a message hash
     public String createMessageHash (String messageID, String message , int numMessagesSent){
         String firstTwoID = messageID.substring(0,2);
         String [] words = message.split(" ");
@@ -31,6 +36,7 @@ public class Messages {
             return Hash.toUpperCase();
         }
     }
+    //
     public String sentMessage (String option){
         if(option.equals("Send")){
             return "Message sent successfully";
@@ -42,12 +48,15 @@ public class Messages {
             return "invalid option";
         }
     }
+    // We return the total number of messages sent
     public int returnTotalMessages() {
         return numMessagesSent;
     }
+    //We are printing out the messages
     public String printMessages(){
         return messageList.toString();
     }
+    // We are storing the messages
     public void storeMessage(String messageID, String recipient, String message){
         JSONObject json = new JSONObject();
         json.put("messageID", messageID);
