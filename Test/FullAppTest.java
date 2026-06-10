@@ -93,6 +93,7 @@ public class FullAppTest {
         String result = login.loginUser("wrongUser", "wrongPass");
         assertEquals("Username or Password incorrect. Please try again.", result);
     }
+
     //part 2 test units for message tests
     @Test
     //testing the length success of the messages
@@ -101,47 +102,113 @@ public class FullAppTest {
         String message = "Hi Mike, can you join us for dinner tonight";
         assertTrue(message.length() < 250);
     }
+
     @Test
     //testing the length failure of the messages
     public void testMessageLengthFaliure() {
         Messages msg = new Messages();
         String message = "a".repeat(251);
         assertFalse(message.length() < 250);
-}
+    }
+
     @Test
     //testing if the recipient's number is valid
-    public void testRecipientValidNumner(){
+    public void testRecipientValidNumner() {
         Messages msg = new Messages();
         assertEquals("Cellphone number successfully captured", msg.checkRecipientCell("+27718693002"));
-}
+    }
+
     @Test
     //testing if the recipient's number is incorrectly formatted or does not contain an international code
     public void testRecipientInvalidNumner() {
         Messages msg = new Messages();
         assertEquals("Cellphone number is incorrectly formatted or does not contain international code", msg.checkRecipientCell("+27718693002"));
     }
+
     @Test
     //testing the message hash
-    public void testMessageHash(){
+    public void testMessageHash() {
         Messages msg = new Messages();
-        assertEquals("00:1:HITONIGHT", msg.createMessageHash("0012345678","Hi Mike can you join us for dinner tonight?", 1));
+        assertEquals("00:1:HITONIGHT", msg.createMessageHash("0012345678", "Hi Mike can you join us for dinner tonight?", 1));
     }
+
     @Test
     //testing if the messages can send successfully
-    public void testSentMessagesSend(){
+    public void testSentMessagesSend() {
         Messages msg = new Messages();
         assertEquals("Message sent successfully", msg.sentMessage("Send"));
     }
+
     @Test
     //testing if we can disregard the messages
-    public void testSentMessagesDisregard(){
+    public void testSentMessagesDisregard() {
         Messages msg = new Messages();
         assertEquals("Press 0 to delete the message", msg.sentMessage("Disregard"));
     }
+
     @Test
     //testing to see if the messages can be stored
     public void testSentMessagesStore() {
         Messages msg = new Messages();
         assertEquals("Message stored successfully", msg.sentMessage("Store"));
     }
+
+    //part 3 test units for message arrays and menu
+    @Test
+    public void testsentMessages() {
+        Messages msg = new Messages();
+        msg.addsentMessages("Did you get the cake");
+        msg.addsentMessages("It is dinner time!");
+
+        assertTrue(msg.getSentMessages().contains("Did you get the cake"));
+        assertTrue(msg.getSentMessages().contains("It is dinner time!"));
     }
+    // We are displaying the longest message
+    @Test
+    public void testLongestMessage() {
+        Messages msg = new Messages();
+        msg.addsentMessages("Did you get the cake?");
+        msg.addstoredMessage("Where are you? You are late! I have asked you to be on time.", "+27838884567");
+        msg.adddisregaredMessage("Yohoooo, I am at your gate.");
+        msg.addsentMessages("It is dinner time!");
+        msg.addstoredMessage("Ok, I am leaving without you.", "+27838884567");
+        assertEquals("Where are you? You are late! I have asked you to be on time.", msg.getlongestMessage());
+    }
+
+    // We are searching by message ID
+    @Test
+    public void testSearchByMessageID() {
+        Messages msg = new Messages();
+        msg.addsentMessages("It is dinner time!");
+        msg.addMessageID("0838884567");
+        assertEquals("Message found (Sent): It is dinner time!", msg.searchBymessageIDs("0838884567"));
+    }
+
+    // We are searching by recipient
+    @Test
+    public void testSearchByRecipient() {
+        Messages msg = new Messages();
+        msg.addstoredMessage("Where are you? You are late! I have asked you to be on time.", "+27838884567");
+        msg.addstoredMessage("Ok, I am leaving without you.", "+27838884567");
+        assertTrue(msg.searchByRecipient("+27838884567").contains("Where are you?"));
+        assertTrue(msg.searchByRecipient("+27838884567").contains("Ok, I am leaving"));
+    }
+
+    // We delete message using message hash
+    @Test
+    public void testDeleteMessage() {
+        Messages msg = new Messages();
+        msg.addstoredMessage("Where are you? You are late! I have asked you to be on time.", "+27838884567");
+        msg.addMessageHash("00:2:WHERETIME");
+        assertEquals("Message: Where are you? You are late! I have asked you to be on time. Successfully deleted", msg.deleteMessage("00:2:WHERETIME"));
+    }
+
+    // We then display the Report
+    @Test
+    public void testDisplayReport() {
+        Messages msg = new Messages();
+        msg.addsentMessages("Did you get the cake?");
+        msg.addMessageHash("00:1:DIDCAKE");
+        assertNotNull(msg.getSentMessages());
+    }
+}

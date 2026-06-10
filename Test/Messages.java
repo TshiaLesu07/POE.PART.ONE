@@ -37,13 +37,14 @@ public class Messages {
         }
     }
     //
-    public String sentMessage (String option){
-        if(option.equals("Send")){
+     //edited for Part 3 (Added IgnoreCase to equals)
+    public String sentMessage(String option){
+        if(option.equalsIgnoreCase("Send")){
             return "Message sent successfully";
-        }else if (option.equals("Disregard")){
-            return "Press 0 to delete the message";
-        }else if (option.equals("Store")){
-            return "message successfully stored";
+        }else if (option.equalsIgnoreCase("Disregard")){
+            return "Message disregarded";
+        }else if (option.equalsIgnoreCase("Store")){
+            return "Message successfully stored";
         }else{
             return "invalid option";
         }
@@ -71,4 +72,127 @@ public class Messages {
         messageList.add(message);
         System.out.println("message successfully stored");
     }
+    //Part 3 of the POE
+
+    //Creating the arrays
+
+    private ArrayList<String> sentMessages = new ArrayList<>();
+    private ArrayList<String> disregardedMessages = new ArrayList<>();
+    private ArrayList<String> storedMessages = new ArrayList<>();
+    private ArrayList<String> messagehash = new ArrayList<>();
+    private ArrayList<String> messageIDs = new ArrayList<>();
+    private ArrayList<String> storedRecipients = new ArrayList<>();
+
+    //adding sent messages method
+    public void addsentMessages (String message){
+        sentMessages.add(message);
+        System.out.println("Message sent:" + message);
+    }
+
+    //adding disregarded messages method
+    public void adddisregaredMessage (String disregarded){
+        disregardedMessages.add(disregarded);
+        System.out.println("Message disregarded:"+ disregarded);
+    }
+
+    //adding stored messages method
+    public void addstoredMessage (String stored, String recipient){
+        storedMessages.add(stored);
+        storedRecipients.add(recipient);
+        System.out.println("Message stored:");
+    }
+    //adding getting the longest message method
+     public String getlongestMessage(){
+        String longest = "";
+        ArrayList<String> all = new ArrayList<>();
+        all.addAll(sentMessages);
+         all.addAll(storedMessages);
+         all.addAll(disregardedMessages);
+        for (String message : all){
+            if (message.length() > longest.length()){
+                longest = message;
+            }
+        }
+        if (longest.isEmpty()){
+            return "No stored messages yet.";
+        }
+        return longest;
+     }
+
+     //method to search message by message ID
+    public String searchBymessageIDs (String id){
+        for (int i = 0; i < messageIDs.size(); i++){
+            if (messageIDs.get(i).equals(id)) {
+                if (i < sentMessages.size()) {
+                    return "Message found (Sent): " + sentMessages.get(i);
+                }
+                if (i < storedMessages.size()){
+                    return "Message found (Stored): " + storedMessages.get(i);
+                }
+                if (i < disregardedMessages.size()){
+                    return "Message found (Stored): " + disregardedMessages.get(i);
+                }
+            }
+        }
+        return " Message not found ";
+    }
+
+    // search by recipient
+    public String searchByRecipient(String recipient){
+        String result = "";
+        for (int i = 0; i < storedRecipients.size(); i++){
+            if (storedRecipients.get(i) != null && storedRecipients.get(i).equalsIgnoreCase(recipient)){
+                result += storedMessages.get(i)+ "\n";
+            }
+        }
+        if (result.isEmpty()){
+            return "No messages found for recipient" + recipient;
+        }
+        return result;
+    }
+
+    // creating a method to delete message using a message hash
+    public String deleteMessage(String hash) {
+        for (int i = 0; i < messagehash.size(); i++) {
+            if (messagehash.get(i).equalsIgnoreCase(hash)) {
+                String deleted = storedMessages.get(i);
+                storedMessages.remove(i);
+                messagehash.remove(i);
+                return "Message: " + deleted + " Successfully deleted";
+            }
+        }
+        return "Message not found";
+    }
+
+    //displaying the report
+    public void displayReport(){
+        System.out.println("== Message Report ==");
+        for (int i = 0; i < sentMessages.size(); i++){
+            System.out.println("Message hash:" + messagehash.get(i));
+            System.out.println("Message:" + sentMessages.get(i));
+            System.out.println("___");
+        }
+    }
+
+    //Adding three methods so we can access messageIDs and message hash in the main class
+    //message ID
+    public void addMessageID(String id){
+        messageIDs.add(id);
+    }
+
+    //message hash
+    public void addMessageHash(String hash){
+        messagehash.add(hash);
+    }
+
+    //stored messages
+    public ArrayList<String> getstoredMessages(){
+        return storedMessages;
+    }
+
+    //adding a getter for the test unit
+    public ArrayList<String> getSentMessages(){
+        return sentMessages;
+    }
+
 }
